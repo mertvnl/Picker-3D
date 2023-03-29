@@ -5,7 +5,7 @@ public class PlayerInput : MonoBehaviour
     private float _inputX;
     public float InputX { get { return _inputX; } }
 
-    private const float INPUT_LIMIT = 20;
+    private const float INPUT_LIMIT = 10;
     private const float INPUT_SMOOTHNESS = 15f;
 
     private float _smoothX;

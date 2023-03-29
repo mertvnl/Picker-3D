@@ -30,8 +30,8 @@ public class PlayerMovement : MonoBehaviour
 
     private void Move()
     {
-        Vector3 velocity = new Vector3(x: movementData.BaseSwerveSpeed * PlayerInput.InputX, y: Player.Rigidbody.velocity.y, z: movementData.BaseMovementSpeed) * Time.fixedDeltaTime;
-        Player.Rigidbody.velocity = velocity;
+        Vector3 direction = new Vector3(x: movementData.BaseSwerveSpeed * PlayerInput.InputX, y: Player.Rigidbody.velocity.y, z: movementData.BaseMovementSpeed) * Time.fixedDeltaTime;
+        Player.Rigidbody.velocity = direction;
     }
 
     private void HandleClamping()
