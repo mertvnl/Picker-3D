@@ -4,6 +4,6 @@ using UnityEngine;
 
 public interface IComponent
 {
-    public Transform transform { get; }
-    public GameObject gameObject { get; }
+    Transform transform { get; }
+    GameObject gameObject { get; }
 }
