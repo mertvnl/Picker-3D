@@ -8,11 +8,13 @@ public class InGamePanel : EasyPanel
     {
         LevelSystem.Instance.OnLevelStarted.AddListener(ShowPanelAnimated);
         LevelSystem.Instance.OnLevelLoaded.AddListener(HidePanel);
+        Events.OnLevelSuccess.AddListener(HidePanel);
     }
 
     private void OnDisable()
     {
         LevelSystem.Instance.OnLevelStarted.RemoveListener(ShowPanelAnimated);
         LevelSystem.Instance.OnLevelLoaded.RemoveListener(HidePanel);
+        Events.OnLevelSuccess.RemoveListener(HidePanel);
     }
 }

@@ -23,11 +23,6 @@ public class Depositable : MonoBehaviour, IDeposit
         DepositManager.Instance.AddDeposit(this);
     }
 
-    private void OnDisable()
-    {
-        DepositManager.Instance.RemoveDeposit(this);
-    }
-
     public void Deposit(ICollectable collectable)
     {
         if (_depositedCollectables.Contains(collectable))
@@ -39,7 +34,7 @@ public class Depositable : MonoBehaviour, IDeposit
         OnDeposited.Invoke();
     }
 
-    private void CheckDepositCount()
+    public void CheckDepositCount()
     {
         if (_checkDepositCountCoroutine != null)
             StopCoroutine(_checkDepositCountCoroutine);

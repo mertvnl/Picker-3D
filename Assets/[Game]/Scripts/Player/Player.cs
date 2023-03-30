@@ -44,6 +44,7 @@ public class Player : MonoBehaviour
                 return;
 
             _lastDepositPoint = depositPoint;
+            _lastDepositPoint.Deposit.CheckDepositCount();
             SetControl(false);
             OnReachDepositArea.Invoke();
         }

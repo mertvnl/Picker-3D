@@ -16,6 +16,7 @@ public class ConfettiPanel : MonoBehaviour
         GameManager.Instance.OnLevelCompleted.AddListener(PlayConfetti);
         LevelSystem.Instance.OnLevelLoadingStarted.AddListener(StopConfetti);
         LevelSystem.Instance.OnLevelLoaded.AddListener(StopConfetti);
+        Events.OnLevelSuccess.AddListener(StopConfetti);
     }
 
     private void OnDisable()
@@ -23,6 +24,7 @@ public class ConfettiPanel : MonoBehaviour
         GameManager.Instance.OnLevelCompleted.RemoveListener(PlayConfetti);
         LevelSystem.Instance.OnLevelLoadingStarted.RemoveListener(StopConfetti);
         LevelSystem.Instance.OnLevelLoaded.RemoveListener(StopConfetti);
+        Events.OnLevelSuccess.RemoveListener(StopConfetti);
     }
 
     private void PlayConfetti(bool success)

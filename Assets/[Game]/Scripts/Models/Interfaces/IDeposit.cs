@@ -7,4 +7,5 @@ public interface IDeposit
     Event OnDepositSuccess { get; }
     Event OnDeposited { get; }
     void Deposit(ICollectable collectable);
+    void CheckDepositCount();
 }
