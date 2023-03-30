@@ -7,7 +7,7 @@ public class Collectable : MonoBehaviour, ICollectable
     private Rigidbody _rigidbody;
     public Rigidbody Rigidbody => _rigidbody == null ? GetComponent<Rigidbody>() : _rigidbody;
 
-    private const float RELEASE_FORCE = 100f;
+    private const float RELEASE_FORCE = 5000f;
 
     public void Collect(ICollector collector)
     {
