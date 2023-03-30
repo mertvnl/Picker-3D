@@ -10,19 +10,20 @@ public class Player : MonoBehaviour
 
     public bool IsControlable { get; private set; }
     public Event OnReachDepositArea { get; } = new Event();
+    public Event OnReachFinish { get; } = new Event();
 
     private DepositPoint _lastDepositPoint;
 
     private void OnEnable()
     {
         LevelSystem.Instance.OnLevelStarted.AddListener(Initialize);
-        Events.OnDepositRoadAnimationCompleted.AddListener(() => SetControl(true));
+        Events.OnDepositRoadAnimationCompleted.AddListener(Initialize);
     }
 
     private void OnDisable()
     {
         LevelSystem.Instance.OnLevelStarted.RemoveListener(Initialize);
-        Events.OnDepositRoadAnimationCompleted.RemoveListener(() => SetControl(true));
+        Events.OnDepositRoadAnimationCompleted.RemoveListener(Initialize);
     }
 
     private void Initialize()
@@ -44,8 +45,15 @@ public class Player : MonoBehaviour
                 return;
 
             _lastDepositPoint = depositPoint;
+            _lastDepositPoint.Deposit.CheckDepositCount();
             SetControl(false);
             OnReachDepositArea.Invoke();
+        }
+
+        if (other.TryGetComponent(out FinishRoad finishRoad))
+        {
+            SetControl(false);
+            OnReachFinish.Invoke();
         }
     }
 }

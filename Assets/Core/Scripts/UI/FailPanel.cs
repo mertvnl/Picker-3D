@@ -30,6 +30,6 @@ public class FailPanel : EasyPanel
     public void RestartLevelButton()
     {
         HidePanelAnimated();
-        LevelSystem.Instance.RestartLevel();
+        LevelSystem.Instance.LoadMainLevel();
     }
 }

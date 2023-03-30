@@ -27,7 +27,6 @@ public class DepositPoint : MonoBehaviour
 
     private void RoadAnimation()
     {
-        Debug.Log("Road is opening.");
         moveableGround.DOLocalMoveY(GROUND_TARGET_POSITION, GROUND_MOVE_DURATION).SetEase(Ease.OutBack);
         barrierL.DOLocalRotate(Vector3.forward * 90, GROUND_MOVE_DURATION);
         barrierR.DOLocalRotate(Vector3.forward * -90, GROUND_MOVE_DURATION);

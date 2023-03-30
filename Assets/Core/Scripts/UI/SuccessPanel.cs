@@ -30,6 +30,6 @@ public class SuccessPanel : EasyPanel
     public void NextLevelButton()
     {
         HidePanelAnimated();
-        LevelSystem.Instance.LoadNextLevel();
+        Events.OnLevelSuccess.Invoke();
     }
 }

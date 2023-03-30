@@ -1,11 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using Sirenix.OdinInspector;
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -13,17 +8,31 @@ public class LevelSystem : Singleton<LevelSystem>
 {
     [SerializeField] private LevelDatabase levelDatabase;
 
-    public Level CurrentLevel { get; private set; }
-
-    public bool IsLevelStarted { get; set; }
-
-    private int currentLevelIndex;
-    private bool isLevelLoading;
+    public bool IsLevelStarted { get; private set; }
+    public Vector3 NextLevelStartPosition => _nextLevelPrefab.transform.position;
 
     public Event OnLevelLoadingStarted = new Event();
     public Event OnLevelLoaded = new Event();
     public Event OnLevelStarted = new Event();
     public Event OnLevelFinished = new Event();
+
+    private int _currentLevelIndex;
+    private bool _isLevelLoading;
+    private float _levelOffset;
+    private GameObject _nextLevelPrefab;
+    private List<GameObject> _spawnedLevelPrefabs = new List<GameObject>();
+
+    private const string LAST_LEVEL_KEY = "LastLevelIndex";
+
+    private void OnEnable()
+    {
+        Events.OnLevelSuccess.AddListener(DestroyPreviousLevel);
+    }
+
+    private void OnDisable()
+    {
+        Events.OnLevelSuccess.RemoveListener(DestroyPreviousLevel);
+    }
 
     public void StartLevel()
     {
@@ -41,67 +50,66 @@ public class LevelSystem : Singleton<LevelSystem>
         OnLevelFinished.Invoke();
     }
 
-    private void LoadLevel(int levelIndex)
+    public void LoadMainLevel()
     {
-        if (isLevelLoading) return;
+        if (_isLevelLoading) return;
 
-        StartCoroutine(LoadLevelCo(levelIndex));
+        StartCoroutine(LoadLevelCo());
     }
 
-    private IEnumerator LoadLevelCo(int levelIndex)
+    private IEnumerator LoadLevelCo()
     {
+        _levelOffset = 0;
         IsLevelStarted = false;
-        isLevelLoading = true;
+        _isLevelLoading = true;
         OnLevelLoadingStarted.Invoke();
         yield return new WaitForSeconds(1f);
-        Level targetLevel = levelDatabase.GetLevelByIndex(levelIndex);
-        yield return SceneManager.LoadSceneAsync(targetLevel.levelId);
+        yield return SceneManager.LoadSceneAsync(0);
+        SpawnLastLevel();
         yield return new WaitForSeconds(0.5f);
-        currentLevelIndex = levelIndex;
-        SaveLoadSystem.SetInt("LastLevelIndex", currentLevelIndex);
-        CurrentLevel = targetLevel;
         OnLevelLoaded.Invoke();
-        isLevelLoading = false;
+        _isLevelLoading = false;
     }
 
-    public void LoadLastLevel()
+    public void SpawnNextLevel()
     {
-        LoadLevel(GetLastLevelIndex());
+        int nextLevelIndex = _currentLevelIndex + 1;
+
+        SpawnLevel(nextLevelIndex);
     }
 
-    [Button]
-    public void LoadNextLevel()
+    public void SpawnLastLevel()
     {
-        int nextLevelIndex = currentLevelIndex + 1;
+        int lastLevelIndex = GetLastLevelIndex();
 
-        if (nextLevelIndex > GetLevelCount())
-            LoadLevel(0);
-        else
-            LoadLevel(nextLevelIndex);
+        SpawnLevel(lastLevelIndex);
     }
 
-    [Button]
-    public void LoadPreviousLevel()
+    private void SpawnLevel(int levelIndex)
     {
-        int previousLevelIndex = currentLevelIndex - 1;
+        if (levelIndex > GetLevelCount())
+            levelIndex = 0;
 
-        if (previousLevelIndex < 0)
-            LoadLevel(0);
-        else
-            LoadLevel(previousLevelIndex);
+        LevelData levelData = levelDatabase.GetLevelDataByIndex(levelIndex);
+
+        Vector3 spawnPosition = Vector3.forward * _levelOffset;
+
+        _nextLevelPrefab = Instantiate(levelData.Prefab, spawnPosition, Quaternion.identity);
+        _spawnedLevelPrefabs.Add(_nextLevelPrefab);
+
+        _levelOffset += levelData.LevelLength;
+        _currentLevelIndex = levelIndex;
     }
 
-    [Button]
-    public void RestartLevel()
+    private void DestroyPreviousLevel()
     {
-        LoadLevel(currentLevelIndex);
-    }
+        if (_spawnedLevelPrefabs.Count < 3)
+            return;
 
-    public void LoadCurrentEditorLevel()
-    {
-        currentLevelIndex = levelDatabase.GetLevelIndexById(SceneManager.GetActiveScene().name);
-        CurrentLevel = levelDatabase.GetLevelByIndex(currentLevelIndex);
-        OnLevelLoaded.Invoke();
+        SaveLoadSystem.SetInt(LAST_LEVEL_KEY, _currentLevelIndex);
+        GameObject levelToDestroy = _spawnedLevelPrefabs[0];
+        _spawnedLevelPrefabs.Remove(levelToDestroy);
+        Destroy(levelToDestroy);
     }
 
     public int GetLevelCount()
@@ -111,32 +119,6 @@ public class LevelSystem : Singleton<LevelSystem>
 
     public int GetLastLevelIndex()
     {
-        return SaveLoadSystem.GetInt("LastLevelIndex", 0);
+        return SaveLoadSystem.GetInt(LAST_LEVEL_KEY, 0);
     }
-}
-
-public enum LevelType
-{
-    Normal,
-    Tutorial
-}
-
-[System.Serializable]
-public struct Level
-{
-    [ValueDropdown("GetScenesInBuildSettings")]
-    public string levelId;
-    public LevelType levelType;
-
-#if UNITY_EDITOR
-    private IEnumerable<string> GetScenesInBuildSettings()
-    {
-        string[] scenes = EditorBuildSettings.scenes
-            .Where(scene => scene.enabled)
-            .Select(scene => Path.GetFileNameWithoutExtension(scene.path))
-            .ToArray();
-
-        return scenes;
-    }
-#endif
 }

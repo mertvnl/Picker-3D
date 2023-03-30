@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using DG.Tweening;
+using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -9,6 +10,18 @@ public class PlayerMovement : MonoBehaviour
 
     private Player _player;
     public Player Player => _player == null ? GetComponent<Player>() : _player;
+
+    private const float START_POINT_MOVE_DURATION = 2f;
+
+    private void OnEnable()
+    {
+        Player.OnReachFinish.AddListener(MoveToStartPoint);
+    }
+
+    private void OnDisable()
+    {
+        Player.OnReachFinish.RemoveListener(MoveToStartPoint);
+    }
 
     private void FixedUpdate()
     {
@@ -37,5 +50,11 @@ public class PlayerMovement : MonoBehaviour
         Vector3 pos = transform.position;
         pos.x = Mathf.Clamp(pos.x, -movementData.ClampValueX, movementData.ClampValueX);
         transform.position = pos;
+    }
+
+    private void MoveToStartPoint()
+    {
+        transform.DOMove(LevelSystem.Instance.NextLevelStartPosition, START_POINT_MOVE_DURATION)
+            .OnComplete(() => GameManager.Instance.CompleteLevel(true));
     }
 }

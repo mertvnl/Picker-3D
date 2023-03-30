@@ -11,10 +11,6 @@ public static class Bootstrapper
 
         await Task.Delay(3000);
 
-#if UNITY_EDITOR
-        LevelSystem.Instance.LoadCurrentEditorLevel();
-#else
-        LevelSystem.Instance.LoadLastLevel();
-#endif
+        LevelSystem.Instance.LoadMainLevel();
     }
 }

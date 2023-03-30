@@ -20,6 +20,6 @@ public class RestartButton : MonoBehaviour
 
     private void RestartLevel()
     {
-        LevelSystem.Instance.RestartLevel();
+        LevelSystem.Instance.LoadMainLevel();
     }
 }
