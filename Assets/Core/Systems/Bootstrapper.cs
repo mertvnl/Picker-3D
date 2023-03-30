@@ -11,6 +11,6 @@ public static class Bootstrapper
 
         await Task.Delay(3000);
 
-        LevelSystem.Instance.LoadLastLevel();
+        LevelSystem.Instance.LoadMainLevel();
     }
 }
