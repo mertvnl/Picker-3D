@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -8,6 +9,16 @@ public class GameManager : Singleton<GameManager>
     private bool isLevelCompleted;
 
     public Event<bool> OnLevelCompleted = new Event<bool>();
+
+    private void Awake()
+    {
+        Initialize();
+    }
+
+    private void Initialize()
+    {
+        DOTween.SetTweensCapacity(500, 500);
+    }
 
     private void OnEnable()
     {

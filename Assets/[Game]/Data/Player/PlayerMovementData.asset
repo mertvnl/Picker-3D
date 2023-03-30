@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13c2dae837f2d844f95aa07751e1c159, type: 3}
   m_Name: PlayerMovementData
   m_EditorClassIdentifier: 
-  <BaseMovementSpeed>k__BackingField: 500
-  <BaseSwerveSpeed>k__BackingField: 300
-  <ClampValueX>k__BackingField: 4.5
+  <BaseMovementSpeed>k__BackingField: 2500
+  <BaseSwerveSpeed>k__BackingField: 500
+  <ClampValueX>k__BackingField: 3
