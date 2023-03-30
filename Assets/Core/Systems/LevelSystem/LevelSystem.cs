@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -7,15 +8,31 @@ public class LevelSystem : Singleton<LevelSystem>
 {
     [SerializeField] private LevelDatabase levelDatabase;
 
-    public bool IsLevelStarted { get; set; }
-
-    private int currentLevelIndex;
-    private bool isLevelLoading;
+    public bool IsLevelStarted { get; private set; }
+    public Vector3 NextLevelStartPosition => _nextLevelPrefab.transform.position;
 
     public Event OnLevelLoadingStarted = new Event();
     public Event OnLevelLoaded = new Event();
     public Event OnLevelStarted = new Event();
     public Event OnLevelFinished = new Event();
+
+    private int _currentLevelIndex;
+    private bool _isLevelLoading;
+    private float _levelOffset;
+    private GameObject _nextLevelPrefab;
+    private List<GameObject> _spawnedLevelPrefabs = new List<GameObject>();
+
+    private const string LAST_LEVEL_KEY = "LastLevelIndex";
+
+    private void OnEnable()
+    {
+        Events.OnLevelSuccess.AddListener(DestroyPreviousLevel);
+    }
+
+    private void OnDisable()
+    {
+        Events.OnLevelSuccess.RemoveListener(DestroyPreviousLevel);
+    }
 
     public void StartLevel()
     {
@@ -33,51 +50,66 @@ public class LevelSystem : Singleton<LevelSystem>
         OnLevelFinished.Invoke();
     }
 
-    public void RestartLevel()
+    public void LoadMainLevel()
     {
-        LoadLevel(0);
+        if (_isLevelLoading) return;
+
+        StartCoroutine(LoadLevelCo());
     }
 
-    private void LoadLevel(int levelIndex)
+    private IEnumerator LoadLevelCo()
     {
-        if (isLevelLoading) return;
-
-        StartCoroutine(LoadLevelCo(levelIndex));
-    }
-
-    private IEnumerator LoadLevelCo(int levelIndex)
-    {
+        _levelOffset = 0;
         IsLevelStarted = false;
-        isLevelLoading = true;
+        _isLevelLoading = true;
         OnLevelLoadingStarted.Invoke();
         yield return new WaitForSeconds(1f);
         yield return SceneManager.LoadSceneAsync(0);
+        SpawnLastLevel();
         yield return new WaitForSeconds(0.5f);
-        currentLevelIndex = levelIndex;
-        SaveLoadSystem.SetInt("LastLevelIndex", currentLevelIndex);
         OnLevelLoaded.Invoke();
-        isLevelLoading = false;
+        _isLevelLoading = false;
     }
 
-    public void LoadLastLevel()
+    public void SpawnNextLevel()
     {
-        LoadLevel(GetLastLevelIndex());
+        int nextLevelIndex = _currentLevelIndex + 1;
+
+        SpawnLevel(nextLevelIndex);
     }
 
-    [Button]
-    public void LoadNextLevel()
+    public void SpawnLastLevel()
     {
-        int nextLevelIndex = currentLevelIndex + 1;
+        int lastLevelIndex = GetLastLevelIndex();
 
-        if (nextLevelIndex > GetLevelCount())
-            LoadLevel(0);
-        else
-            LoadLevel(nextLevelIndex);
+        SpawnLevel(lastLevelIndex);
     }
 
-    public void SpawnLevel(int levelIndex, float levelLength)
+    private void SpawnLevel(int levelIndex)
     {
+        if (levelIndex > GetLevelCount())
+            levelIndex = 0;
 
+        LevelData levelData = levelDatabase.GetLevelDataByIndex(levelIndex);
+
+        Vector3 spawnPosition = Vector3.forward * _levelOffset;
+
+        _nextLevelPrefab = Instantiate(levelData.Prefab, spawnPosition, Quaternion.identity);
+        _spawnedLevelPrefabs.Add(_nextLevelPrefab);
+
+        _levelOffset += levelData.LevelLength;
+        _currentLevelIndex = levelIndex;
+    }
+
+    private void DestroyPreviousLevel()
+    {
+        if (_spawnedLevelPrefabs.Count < 3)
+            return;
+
+        SaveLoadSystem.SetInt(LAST_LEVEL_KEY, _currentLevelIndex);
+        GameObject levelToDestroy = _spawnedLevelPrefabs[0];
+        _spawnedLevelPrefabs.Remove(levelToDestroy);
+        Destroy(levelToDestroy);
     }
 
     public int GetLevelCount()
@@ -87,6 +119,6 @@ public class LevelSystem : Singleton<LevelSystem>
 
     public int GetLastLevelIndex()
     {
-        return SaveLoadSystem.GetInt("LastLevelIndex", 0);
+        return SaveLoadSystem.GetInt(LAST_LEVEL_KEY, 0);
     }
 }

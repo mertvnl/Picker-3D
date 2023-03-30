@@ -5,16 +5,18 @@ using UnityEngine;
 
 public class LevelTextController : MonoBehaviour
 {
-    private TextMeshProUGUI text;
-    public TextMeshProUGUI Text { get { return text == null ? text = GetComponent<TextMeshProUGUI>() : text; } }
+    private TextMeshProUGUI _text;
+    public TextMeshProUGUI Text { get { return _text == null ? _text = GetComponent<TextMeshProUGUI>() : _text; } }
     private void OnEnable()
     {
         LevelSystem.Instance.OnLevelLoaded.AddListener(UpdateLevelText);
+        LevelSystem.Instance.OnLevelStarted.AddListener(UpdateLevelText);
     }
 
     private void OnDisable()
     {
         LevelSystem.Instance.OnLevelLoaded.RemoveListener(UpdateLevelText);
+        LevelSystem.Instance.OnLevelStarted.RemoveListener(UpdateLevelText);
     }
 
     private void UpdateLevelText()

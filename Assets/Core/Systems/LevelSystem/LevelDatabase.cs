@@ -6,4 +6,9 @@ using UnityEngine;
 public class LevelDatabase : ScriptableObject
 {
     public LevelData[] levels;
+
+    public LevelData GetLevelDataByIndex(int index)
+    {
+        return levels[index];
+    }
 }

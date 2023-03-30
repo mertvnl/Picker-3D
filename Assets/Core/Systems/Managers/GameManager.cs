@@ -23,11 +23,13 @@ public class GameManager : Singleton<GameManager>
     private void OnEnable()
     {
         LevelSystem.Instance.OnLevelLoaded.AddListener(ResetLevelCompletionStatus);
+        Events.OnLevelSuccess.AddListener(ResetLevelCompletionStatus);
     }
 
     private void OnDisable()
     {
         LevelSystem.Instance.OnLevelLoaded.RemoveListener(ResetLevelCompletionStatus);
+        Events.OnLevelSuccess.RemoveListener(ResetLevelCompletionStatus);
     }
 
     [Button]
