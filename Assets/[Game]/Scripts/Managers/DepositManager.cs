@@ -17,7 +17,7 @@ public class DepositManager : Singleton<DepositManager>
 
     public void RemoveDeposit(IDeposit deposit)
     {
-        if (_deposits.Contains(deposit))
+        if (!_deposits.Contains(deposit))
             return;
 
         _deposits.Remove(deposit);

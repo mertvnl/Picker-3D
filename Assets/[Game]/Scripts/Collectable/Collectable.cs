@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using DG.Tweening;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,7 +8,8 @@ public class Collectable : MonoBehaviour, ICollectable
     private Rigidbody _rigidbody;
     public Rigidbody Rigidbody => _rigidbody == null ? GetComponent<Rigidbody>() : _rigidbody;
 
-    private const float RELEASE_FORCE = 5000f;
+    private const float RELEASE_FORCE = 2500f;
+    private const float DISPOSE_DELAY = 1f;
 
     public void Collect(ICollector collector)
     {
@@ -26,8 +28,7 @@ public class Collectable : MonoBehaviour, ICollectable
 
     public void Dispose()
     {
-        Debug.Log($"Disposed {gameObject.name}");
-        Destroy(gameObject);
+        DOVirtual.DelayedCall(DISPOSE_DELAY, () => Destroy(gameObject)).SetLink(gameObject);
     }
 
     private void OnTriggerEnter(Collider other)

@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlayerCollector : MonoBehaviour, ICollector
 {
     private Player _player;
-    public Player Player => _player == null ? GetComponentInParent<Player>() : _player;
+    public Player Player => _player == null ? GetComponent<Player>() : _player;
 
     public List<ICollectable> Collectables { get; private set; } = new List<ICollectable>();
 

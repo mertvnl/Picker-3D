@@ -1,16 +1,20 @@
-﻿using System.Collections;
+﻿using DG.Tweening;
+using Sirenix.OdinInspector;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Depositable : MonoBehaviour, IDeposit
 {
     [field: SerializeField] public int ReqiuredDepositCount { get; private set; }
-    [field: SerializeField] public int CurrentDepositCount { get; private set; }
+    public int CurrentDepositCount => _depositedCollectables.Count;
     public Event OnDepositSuccess { get; } = new Event();
+    public Event OnDeposited { get; } = new Event();
 
     private Coroutine _checkDepositCountCoroutine;
     private WaitForSeconds _checkDuration = new WaitForSeconds(FAIL_CHECK_DELAY);
     private bool _isCompleted;
+    private List<ICollectable> _depositedCollectables = new List<ICollectable>();
 
     private const float FAIL_CHECK_DELAY = 2f;
 
@@ -26,8 +30,13 @@ public class Depositable : MonoBehaviour, IDeposit
 
     public void Deposit(ICollectable collectable)
     {
-        CurrentDepositCount++;
+        if (_depositedCollectables.Contains(collectable))
+            return;
+        
+        _depositedCollectables.Add(collectable);
+        collectable.Dispose();
         CheckDepositCount();
+        OnDeposited.Invoke();
     }
 
     private void CheckDepositCount()

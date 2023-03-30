@@ -9,8 +9,9 @@ public class Player : MonoBehaviour
     public Rigidbody Rigidbody => _rigidbody == null ? GetComponent<Rigidbody>() : _rigidbody;
 
     public bool IsControlable { get; private set; }
-
     public Event OnReachDepositArea { get; } = new Event();
+
+    private DepositPoint _lastDepositPoint;
 
     private void OnEnable()
     {
@@ -32,12 +33,17 @@ public class Player : MonoBehaviour
     private void SetControl(bool isActive)
     {
         IsControlable = isActive;
+        Rigidbody.isKinematic = !isActive;
     }
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.TryGetComponent(out DepositPoint depositPoint))
         {
+            if (ReferenceEquals(depositPoint, _lastDepositPoint))
+                return;
+
+            _lastDepositPoint = depositPoint;
             SetControl(false);
             OnReachDepositArea.Invoke();
         }
