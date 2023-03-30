@@ -52,7 +52,6 @@ public class Depositable : MonoBehaviour, IDeposit
         if (CurrentDepositCount >= ReqiuredDepositCount)
         {
             _isCompleted = true;
-            Debug.Log("Deposit completed successfuly.");
             DepositManager.Instance.RemoveDeposit(this);
             OnDepositSuccess.Invoke();
         }

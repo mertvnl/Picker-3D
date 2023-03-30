@@ -7,6 +7,16 @@ public class DepositManager : Singleton<DepositManager>
 {
     private List<IDeposit> _deposits = new List<IDeposit>();
 
+    private void OnEnable()
+    {
+        LevelSystem.Instance.OnLevelLoadingStarted.AddListener(ResetDeposits);
+    }
+
+    private void OnDisable()
+    {
+        LevelSystem.Instance.OnLevelLoadingStarted.RemoveListener(ResetDeposits);
+    }
+
     public void AddDeposit(IDeposit deposit)
     {
         if (_deposits.Contains(deposit)) 
@@ -26,9 +36,14 @@ public class DepositManager : Singleton<DepositManager>
 
     private void CheckDepositStatus()
     {
-        if (_deposits.Count != 0)
+        if (_deposits.Count != 1)
             return;
 
-        Debug.Log("All deposits completed. Spawn new level.");
+        LevelSystem.Instance.SpawnNextLevel();
+    }
+
+    private void ResetDeposits()
+    {
+        _deposits.Clear();
     }
 }
