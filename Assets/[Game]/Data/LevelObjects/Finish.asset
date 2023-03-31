@@ -9,8 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bd9a249eb0f090c43a80ff3cc892a061, type: 3}
-  m_Name: Level 03
+  m_Script: {fileID: 11500000, guid: 60b247c6e383e994abd7d7402bd54b4a, type: 3}
+  m_Name: Finish
   m_EditorClassIdentifier: 
-  Prefab: {fileID: 3174371082073842103, guid: 71ddacd9f4d29d240a8ea7fc272fde02, type: 3}
-  LevelLength: 136
+  <Prefab>k__BackingField: {fileID: 4668975714451025848, guid: f7a800c1b11444f40b19f95ed6c1ae40,
+    type: 3}
+  <ObjectSize>k__BackingField: 30

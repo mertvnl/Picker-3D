@@ -94,7 +94,7 @@ public class LevelSystem : Singleton<LevelSystem>
 
         Vector3 spawnPosition = Vector3.forward * _levelOffset;
 
-        _nextLevelPrefab = Instantiate(levelData.Prefab, spawnPosition, Quaternion.identity);
+        _nextLevelPrefab = Instantiate(levelData.LevelPrefab, spawnPosition, Quaternion.identity);
         _spawnedLevelPrefabs.Add(_nextLevelPrefab);
 
         _levelOffset += levelData.LevelLength;

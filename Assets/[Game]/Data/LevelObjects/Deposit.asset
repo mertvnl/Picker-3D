@@ -9,8 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bd9a249eb0f090c43a80ff3cc892a061, type: 3}
-  m_Name: Level 02
+  m_Script: {fileID: 11500000, guid: ec429be90d40041478cee2c6d1078808, type: 3}
+  m_Name: Deposit
   m_EditorClassIdentifier: 
-  Prefab: {fileID: 8592453382085271171, guid: b8d27c0991f89f94d964f114b9dfbea1, type: 3}
-  LevelLength: 241
+  <Prefab>k__BackingField: {fileID: 7938974271698010488, guid: ec085e9c76a064d46a89504cc52f6ec3,
+    type: 3}
+  <ObjectSize>k__BackingField: 8
+  <RequiredDepositCount>k__BackingField: 0
