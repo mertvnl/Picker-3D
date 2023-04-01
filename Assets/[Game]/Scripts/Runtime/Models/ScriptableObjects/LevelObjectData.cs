@@ -17,3 +17,11 @@ public enum LevelObjectType
     Finish,
     Collectable
 }
+
+public enum CollectableType
+{
+    Sphere,
+    Cube,
+    Capsule,
+    Cylinder
+}

@@ -12,9 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be218d0898690435aa2369c66512a4ee, type: 3}
   m_Name: LevelDatabase
   m_EditorClassIdentifier: 
-  <Levels>k__BackingField:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  <Levels>k__BackingField: []

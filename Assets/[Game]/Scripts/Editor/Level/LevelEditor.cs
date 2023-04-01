@@ -10,6 +10,7 @@ public class LevelEditor : EditorWindow
     public static LevelDatabase LevelDatabase => levelDatabase == null ? Resources.Load<LevelDatabase>("LevelDatabase") : levelDatabase;
 
     private static LevelObjectType levelObjectType;
+    private static CollectableType collectableType;
     private static int requiredDepositCount = 10;
     private static List<LevelObjectData> levelObjectsData = new List<LevelObjectData>();
     private static GameObject levelRoot;
@@ -21,7 +22,7 @@ public class LevelEditor : EditorWindow
     private const string LEVEL_DATA_PATH = "Assets/[Game]/Data/Level/";
     private const string LEVEL_PREFAB_PATH = "Assets/[Game]/Prefabs/Level/";
 
-    [MenuItem("Picker3D/Level Editor")]
+    [MenuItem("Picker3D/Level Creator")]
     private static void OpenWindow()
     {
         LevelEditor levelEditor = (LevelEditor)GetWindow(typeof(LevelEditor));
@@ -85,8 +86,9 @@ public class LevelEditor : EditorWindow
         }
         else
         {
-            EditorGUILayout.HelpBox("You can spawn collectables by left clicking to platform.", MessageType.Info);
-            EditorGUILayout.HelpBox("You can delete spawned collectables by SHIFT + left click", MessageType.Info);
+            GUILayout.Label("Collectable Type to Spawn");
+
+            collectableType = (CollectableType)EditorGUILayout.EnumPopup(collectableType);
         }
 
         if (levelRoot != null)
@@ -111,11 +113,6 @@ public class LevelEditor : EditorWindow
                     ResetSettings();
                 }
             }
-            else
-                EditorGUILayout.HelpBox("In order to create the level you need to spawn ONE 'Finish' level object type at the end of the level.", MessageType.Warning);
-
-            if (!isCollectableSpawned)
-                EditorGUILayout.HelpBox("You should spawn some collectables.", MessageType.Warning);
 
             if (GUILayout.Button("Reset"))
             {
@@ -123,6 +120,8 @@ public class LevelEditor : EditorWindow
                 ResetSettings();
             }
         }
+
+        DrawMessageBoxes();
 
         GUILayout.EndArea();
     }
@@ -132,14 +131,16 @@ public class LevelEditor : EditorWindow
         if (levelObjectType != LevelObjectType.Collectable)
             return;
 
-        SpawnCollectable();
+        HandleCollectables();
     }
 
-    private void SpawnCollectable()
+    private void HandleCollectables()
     {
-        if (UnityEngine.Event.current.type == EventType.MouseDown)
+        UnityEngine.Event e = UnityEngine.Event.current;
+
+        if (e.type == EventType.MouseDown && e.button == 0)
         {
-            Ray ray = HandleUtility.GUIPointToWorldRay(UnityEngine.Event.current.mousePosition);
+            Ray ray = HandleUtility.GUIPointToWorldRay(e.mousePosition);
             RaycastHit hit;
             int layer = 1 << 8;
 
@@ -159,7 +160,23 @@ public class LevelEditor : EditorWindow
             }
         }
 
-        UnityEngine.Event.current.Use();
+        if (e.type == EventType.MouseDown && e.button == 1)
+        {
+            Ray ray = HandleUtility.GUIPointToWorldRay(e.mousePosition);
+            RaycastHit hit;
+            int layer = 1 << 8;
+
+            if (Physics.Raycast(ray, out hit, Mathf.Infinity, layer))
+            {
+                foreach (Collider col in Physics.OverlapSphere(hit.point, 0.1f))
+                {
+                    if (col.TryGetComponent(out ICollectable collectable))
+                    {
+                        DestroyImmediate(collectable.transform.parent.gameObject);
+                    }
+                }
+            }
+        }
     }
 
     private static void ResetSettings()
@@ -169,6 +186,25 @@ public class LevelEditor : EditorWindow
         levelObjectsData = new List<LevelObjectData>();
         levelRoot = null;
         offset = 0f;
+        isCollectableSpawned = false;
+    }
+
+    private static void DrawMessageBoxes()
+    {
+        if (levelRoot != null)
+        {
+            if (!isCollectableSpawned)
+                EditorGUILayout.HelpBox("You should spawn some collectables.", MessageType.Warning);
+
+            if (!levelObjectsData.Find(x => x.Type == LevelObjectType.Finish))
+                EditorGUILayout.HelpBox("In order to create the level you need to spawn ONE 'Finish' level object type at the end of the level.", MessageType.Warning);
+
+            if (levelObjectType == LevelObjectType.Collectable)
+            {
+                EditorGUILayout.HelpBox("You can spawn collectables by left clicking to platform.", MessageType.Info);
+                EditorGUILayout.HelpBox("You can delete spawned collectables by RIGHT clicking.", MessageType.Info);
+            }
+        }
     }
 
     private static void DestroyLevelRoot()
@@ -186,6 +222,9 @@ public class LevelEditor : EditorWindow
 
     private LevelObjectData GetLevelObjectByType(LevelObjectType type)
     {
-        return Resources.Load<LevelObjectData>($"LevelObjects/{type}");
+        if (type == LevelObjectType.Collectable)
+            return Resources.Load<LevelObjectData>($"LevelObjects/Collectables/{collectableType}");
+        else
+            return Resources.Load<LevelObjectData>($"LevelObjects/{type}");
     }
 }

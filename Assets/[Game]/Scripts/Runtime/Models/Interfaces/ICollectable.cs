@@ -1,4 +1,4 @@
-﻿public interface ICollectable
+﻿public interface ICollectable : IComponent
 {
     void Collect(ICollector collector);
     void UnCollect(ICollector collector);

@@ -36,7 +36,7 @@ public class DepositManager : Singleton<DepositManager>
 
     private void CheckDepositStatus()
     {
-        if (_deposits.Count != 1)
+        if (_deposits.Count != 0)
             return;
 
         LevelSystem.Instance.SpawnNextLevel();
