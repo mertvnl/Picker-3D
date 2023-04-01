@@ -109,6 +109,9 @@ public class LevelEditor : EditorWindow
 
                     LevelDatabase.AddNewLevel(levelData);
 
+                    AssetDatabase.SaveAssets();
+                    AssetDatabase.Refresh();
+
                     DestroyLevelRoot();
                     ResetSettings();
                 }
