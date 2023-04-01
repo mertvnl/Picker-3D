@@ -2,7 +2,7 @@
 
 public interface IDeposit
 {
-    int ReqiuredDepositCount { get; }
+    int ReqiuredDepositCount { get; set; }
     int CurrentDepositCount { get; }
     Event OnDepositSuccess { get; }
     Event OnDeposited { get; }

@@ -114,7 +114,7 @@ public class LevelSystem : Singleton<LevelSystem>
 
     public int GetLevelCount()
     {
-        return levelDatabase.levels.Length - 1;
+        return levelDatabase.Levels.Count - 1;
     }
 
     public int GetLastLevelIndex()

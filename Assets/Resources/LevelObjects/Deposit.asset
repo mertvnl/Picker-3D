@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ec429be90d40041478cee2c6d1078808, type: 3}
   m_Name: Deposit
   m_EditorClassIdentifier: 
+  <Type>k__BackingField: 1
   <Prefab>k__BackingField: {fileID: 7938974271698010488, guid: ec085e9c76a064d46a89504cc52f6ec3,
     type: 3}
   <ObjectSize>k__BackingField: 8

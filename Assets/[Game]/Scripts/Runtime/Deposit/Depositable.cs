@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class Depositable : MonoBehaviour, IDeposit
 {
-    [field: SerializeField] public int ReqiuredDepositCount { get; private set; }
+    [field: SerializeField] public int ReqiuredDepositCount { get; set; }
     public int CurrentDepositCount => _depositedCollectables.Count;
     public Event OnDepositSuccess { get; } = new Event();
     public Event OnDeposited { get; } = new Event();

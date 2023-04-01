@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public static class Extensions
@@ -57,5 +58,20 @@ public static class Extensions
         }
 
         return closest;
+    }
+
+    public static IEnumerable<T> ClearNulls<T>(this IEnumerable<T> enumerable) where T : class
+    {
+        //If the generic type inherits from UnityEngine.Object, this needs to be performed to handle the == overload.
+        if (typeof(Object).IsAssignableFrom(typeof(T)))
+        {
+            enumerable = enumerable.Where(e => (e as Object) != null);
+        }
+        else
+        {
+            enumerable = enumerable.Where(e => e != null);
+        }
+
+        return enumerable;
     }
 }
