@@ -31,6 +31,6 @@ public class LevelDatabase : ScriptableObject
 
     private void OrderLevels()
     {
-        Levels = Levels.OrderBy(x => x.name).ToList();
+        Levels = Levels.OrderBy(x => int.Parse(x.name.Replace("Level ", ""))).ToList();
     }
 }
