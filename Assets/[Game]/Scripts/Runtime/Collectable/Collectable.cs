@@ -28,7 +28,11 @@ public class Collectable : MonoBehaviour, ICollectable
 
     public void Dispose()
     {
-        DOVirtual.DelayedCall(DISPOSE_DELAY, () => Destroy(gameObject)).SetLink(gameObject);
+        DOVirtual.DelayedCall(DISPOSE_DELAY, () => 
+        {
+            PoolingSystem.Instance.InstantiatePoolObject("CollectableDisposeFX", transform.position);
+            Destroy(gameObject);
+        }).SetLink(gameObject);
     }
 
     private void OnTriggerEnter(Collider other)
