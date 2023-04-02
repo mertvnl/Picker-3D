@@ -86,7 +86,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8732a5d344a14ca0aedad84efee09bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Pools: []
+  Pools:
+  - Id: DepositSuccessFX
+    Prefab: {fileID: 129898, guid: 36bdc02b23d9ca94d93bd715c0cca5c0, type: 3}
+    Size: 5
+    AutoGrow: 1
+    PooledObjects: []
+  - Id: CollectableDisposeFX
+    Prefab: {fileID: 131008, guid: 1fe35c3ac77275e4d81bc09fcde78105, type: 3}
+    Size: 25
+    AutoGrow: 1
+    PooledObjects: []
   OnPoolInitialised:
     m_PersistentCalls:
       m_Calls: []
